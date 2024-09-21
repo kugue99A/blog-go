@@ -1,0 +1,35 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: "blog-go-api"
+    tty: true
+    ports:
+      - 1323:1323
+    volumes:
+      - .:api
+    # command: "go run cmd/main.go"
+  db:
+    image: mysql:8.0
+    container_name: "blog-go-db"
+    volumes:
+      - ./mysql/db:docker-entrypoint-initdb.d
+      - ./mysql/da:/var/lib/mysql
+      - ./mysql/dump:/dump:/dump
+    environment:
+      MYSQL_DATABASE: blog_go_db
+      MYSQL_USER: blog
+      MYSQL_PASSWORD: blog
+      MYSQL_ROOT_PASSWORD: root
+      TZ: "Asia/Tokyo"
+    ports:
+      - 3306:3306
+    stdin_open: true
+    tty: true
+    platform: linux/x86_64
+    command:
+      - --sql-mode=NO_ENGINE_SUBSTITUTION
+
+volumes:
+  db-store:
